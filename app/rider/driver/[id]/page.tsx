@@ -1,5 +1,6 @@
 'use client'
 
+import { auth } from '../../../../firebaseConfig'
 import { useState } from 'react'
 import { BottomNav } from '@/components/bottom-nav'
 import { ArrowLeft, MapPin, Star, MessageCircle, Shield, Car, CheckCircle2, Users } from 'lucide-react'
@@ -39,11 +40,56 @@ export default function DriverDetailsPage({ params }: { params: { id: string } }
     carPhoto: carImages[0]
   }
 
-  const handleBooking = () => {
-    if (requestedSeats > driverData.availableSeats) {
-      alert(`Only ${driverData.availableSeats} seats available`)
+  const handleBooking = async () => {
+  if (requestedSeats > driverData.availableSeats) {
+    alert(`Only ${driverData.availableSeats} seats available`)
+    return
+  }
+
+  const user = auth.currentUser
+  if (!user) {
+    alert("You must be logged in to book a ride.")
+    return
+  }
+
+  try {
+    setIsBooking(true)
+
+    const res = await fetch("/api/rides/book", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        rideId: params.id,         // from URL
+        driverId: params.id,       // NOTE: fix this when real driver IDs exist
+        riderId: user.uid,         // logged-in user
+      }),
+    })
+
+    const data = await res.json()
+
+    if (!data.success) {
+      console.error(data)
+      alert("Booking failed.")
+      setIsBooking(false)
       return
     }
+
+    // FIRESTORE BOOKING SUCCESS
+    setIsBooked(true)
+
+    setTimeout(() => {
+      router.push("/rides")
+    }, 2000)
+
+  } catch (err) {
+    console.error(err)
+    alert("Something went wrong.")
+  } finally {
+    setIsBooking(false)
+  }
+}
 
     setIsBooking(true)
     
