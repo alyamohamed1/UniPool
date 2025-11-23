@@ -83,7 +83,6 @@ The project was managed using **Agile methodologies**, emphasizing collaboration
 - **Version Control:** All work is tracked through the [GitHub repository]([https://github.com/hanawahban/SWEN-Project](https://github.com/alyamohamed1/v0-unipool-mobile-app).  
 - **Collaborative Workflows:** Team members contribute commits and updates regularly to maintain visibility and version consistency.  
 
-x`
 ---
 
 
